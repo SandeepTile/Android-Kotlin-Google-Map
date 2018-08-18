@@ -20,33 +20,15 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : AppCompatActivity() {
 
-
+    var lat:Double?=null
+    var long:Double?=null
 
     @SuppressLint("MissingPermission")  //ignore runtime permission
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var frag:SupportMapFragment=supportFragmentManager.findFragmentById(R.id.frag) as SupportMapFragment
 
-        frag.getMapAsync(object : OnMapReadyCallback {
-            override fun onMapReady(p0: GoogleMap?) {
-
-
-
-                var options = MarkerOptions( )
-                options.position(LatLng(17.4406571,78.4499841))
-                options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher))
-                options.title("live location")
-                p0!!.addMarker(options)
-                p0!!.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        LatLng(17.4406571,78.4499841),15f))
-
-
-            }
-
-
-        })
 
         var lManager=getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -54,8 +36,8 @@ class MainActivity : AppCompatActivity() {
                 object : LocationListener {
                     override fun onLocationChanged(p0: Location?) {
 
-                       /*lat=p0!!.latitude
-                       long=p0!!.longitude*/
+                       lat=p0!!.latitude
+                       long=p0!!.longitude
 
 
                     }
@@ -74,6 +56,42 @@ class MainActivity : AppCompatActivity() {
 
 
                 })
+
+
+        //for getting current location
+
+        var frag:SupportMapFragment=supportFragmentManager.findFragmentById(R.id.frag) as SupportMapFragment
+
+        frag.getMapAsync(object : OnMapReadyCallback {
+            override fun onMapReady(p0: GoogleMap?) {
+
+
+                if(lat !=null&&long !=null){
+
+                    var options = MarkerOptions()
+                    options.position(LatLng(lat!!, long!!))
+                    options.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin))
+                    options.title("live location")
+                    p0!!.addMarker(options)
+                    p0!!.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            LatLng(lat!!,long!!), 15f))
+
+
+
+                }else {
+                    var options = MarkerOptions()
+                    options.position(LatLng(17.4406571, 78.4499841))
+                    options.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin))
+                    options.title("live location")
+                    p0!!.addMarker(options)
+                    p0!!.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            LatLng(17.4406571, 78.4499841), 15f))
+                }
+
+            }
+
+
+        })
 
     }
 }
